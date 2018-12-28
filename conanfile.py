@@ -40,19 +40,25 @@ class Lz4Conan(ConanFile):
             at.make()
 
     def package(self):
-        self.copy('*.dll', dst='bin')
-        self.copy('lib*',  dst='lib')
-        self.copy('*lib',  dst='lib')
-        self.copy('*.pc',  dst='lib/pkgconfig')
-        self.copy('*.1',   dst='share/man/man1')
-        self.copy('lz4',   dst='bin')
-        self.copy('*.h',   dst='include/lz4')
+        self.copy('*.dll', dst='bin',            keep_path=False)
+
+        self.copy('lib*',  dst='lib',            keep_path=False)
+        self.copy('*lib',  dst='lib',            keep_path=False)
+        self.copy('*.a',   dst='lib',            keep_path=False)
+        self.copy('*.so',  dst='lib',            keep_path=False)
+
+        self.copy('*.pc',  dst='lib/pkgconfig',  keep_path=False)
+        self.copy('*.1',   dst='share/man/man1', keep_path=False)
+        self.copy('lz4',   dst='bin',            keep_path=False)
+        self.copy('*.h',   dst='include/lz4',    keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
 
         if tools.os_info.is_windows:
             self.env_info.path.append(os.path.join(self.package_folder, 'bin'))
+        else:
+            self.env_info.MANPATH.append(os.path.join(self.package_folder, 'shared', 'man'))
 
         # Populate the pkg-config environment variables
         with tools.pythonpath(self):
