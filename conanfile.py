@@ -39,6 +39,22 @@ class Lz4Conan(ConanFile):
             at = AutoToolsBuildEnvironment(self, win_bash=tools.os_info.is_windows)
             at.make()
 
+            install_dir = os.path.join(self.build_folder, 'install')
+            at.install(args=['PREFACE=%s'%install_dir, 'DESTDIR=%s'%install_dir])
+
+    def fixPkgConfig(self, pc_file):
+        self.output.info('Modifying pkg-config file to use a variable prefix')
+        tools.replace_in_file(
+            file_path=pc_file,
+            search='/usr/local',
+            replace="${prefix}"
+        )
+        tools.replace_in_file(
+            file_path=pc_file,
+            search='prefix=${prefix}',
+            replace='prefix=' + self.package_folder
+        )
+
     def package(self):
         self.copy('*.dll', dst='bin',            keep_path=False)
 
@@ -50,7 +66,9 @@ class Lz4Conan(ConanFile):
         self.copy('*.pc',  dst='lib/pkgconfig',  keep_path=False)
         self.copy('*.1',   dst='share/man/man1', keep_path=False)
         self.copy('lz4',   dst='bin',            keep_path=False)
-        self.copy('*.h',   dst='include/lz4',    keep_path=False)
+        self.copy('*.h',   dst='include',    keep_path=False)
+
+        self.fixPkgConfig(os.path.join(self.package_folder, 'lib', 'pkgconfig', 'liblz4.pc'))
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
