@@ -5,8 +5,8 @@ from conans import ConanFile, tools, AutoToolsBuildEnvironment
 class Lz4Conan(ConanFile):
     name            = 'lz4'
     version         = '1.8.3'
-    license         = '<Put the package license here>'
-    author          = '<Put your name here> <And your email here>'
+    license         = 'NTC'
+    author          = 'Matthew Russekk <mrussell@nepte.com.com>'
     url             = 'NTC'
     description     = 'Extremely Fast Compression algorithm'
     settings        = 'os', 'compiler', 'build_type', 'arch'
